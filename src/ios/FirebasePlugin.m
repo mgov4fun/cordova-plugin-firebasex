@@ -204,6 +204,11 @@ static FIRMultiFactorResolver* multiFactorResolver;
     }
 }
 
+- (void)refresh:(CDVInvokedUrlCommand *)command {
+    //Refresh instance if second FirebasePlugin is available
+    firebasePlugin = self;
+}
+
 /*
  * Remote notifications
  */

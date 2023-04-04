@@ -98,6 +98,10 @@ exports.setAutoInitEnabled = function (enabled, success, error) {
     exec(success, error, "FirebasePlugin", "setAutoInitEnabled", [!!enabled]);
 };
 
+exports.refresh = function (success, error) {
+    exec(success, error, "FirebasePlugin", "refresh", []);
+};
+
 // Notifications - iOS-only
 exports.onOpenSettings = function (success, error) {
   exec(success, error, "FirebasePlugin", "onOpenSettings", []);

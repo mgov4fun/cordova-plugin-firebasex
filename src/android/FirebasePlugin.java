@@ -437,6 +437,9 @@ public class FirebasePlugin extends CordovaPlugin {
                 this.getInstallationId(args, callbackContext);
             } else if (action.equals("getInstallationToken")) {
                 this.getInstallationToken(args, callbackContext);
+            } else if (action.equals("refresh")) {
+                //Refresh instance if second FirebasePlugin is available
+                instance = this;
             } else{
                 callbackContext.error("Invalid action: " + action);
                 return false;
