@@ -570,16 +570,6 @@ public class FirebasePlugin extends CordovaPlugin {
     }
 
     public static void sendMessage(Bundle bundle, Context context) {
-        if (!FirebasePlugin.hasNotificationsCallback()) {
-            String packageName = context.getPackageName();
-            if (FirebasePlugin.notificationStack == null) {
-                FirebasePlugin.notificationStack = new ArrayList<Bundle>();
-            }
-            notificationStack.add(bundle);
-
-            return;
-        }
-
         final CallbackContext callbackContext = FirebasePlugin.notificationCallbackContext;
         if(bundle != null){
             // Pass the message bundle to the receiver manager so any registered receivers can decide to handle it
