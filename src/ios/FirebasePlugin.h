@@ -1,6 +1,10 @@
 #import <Cordova/CDV.h>
 #import "AppDelegate.h"
-#import "Firebase.h"
+#import <FirebaseCore/FirebaseCore.h>
+#import <FirebaseMessaging/FirebaseMessaging.h>
+#import <FirebaseAuth/FirebaseAuth.h>
+#import <FirebaseInstallations/FirebaseInstallations.h>
+#import <FirebaseCrashlytics/FirebaseCrashlytics.h>
 @import FirebaseFirestore;
 
 @interface FirebasePlugin : CDVPlugin
