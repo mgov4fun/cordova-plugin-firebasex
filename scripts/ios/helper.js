@@ -12,10 +12,8 @@ var comment = "\"Crashlytics\"";
 
 var versionRegex = /\d+\.\d+\.\d+/,
     firebasePodRegex = /pod 'Firebase\/([^']+)', '(\d+\.\d+\.\d+)'/g,
-    standardFirestorePodRegEx = /pod 'Firebase\/Firestore', '(\d+\.\d+\.\d+)'/,
     googleSignInPodRegEx = /pod 'GoogleSignIn', '(\d+\.\d+\.\d+)'/,
     googleTagManagerPodRegEx = /pod 'GoogleTagManager', '(\d+\.\d+\.\d+)'/,
-    prebuiltFirestorePodTemplate = "pod 'FirebaseFirestore', :tag => '{version}', :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git'",
     iosDeploymentTargetPodRegEx = /platform :ios, '(\d+\.\d+)'/;
 
 module.exports = {
@@ -346,14 +344,6 @@ end
             }
         }
 
-        if(pluginVariables['IOS_USE_PRECOMPILED_FIRESTORE_POD'] === 'true'){
-            var standardFirestorePodMatches = podFileContents.match(standardFirestorePodRegEx);
-            if(standardFirestorePodMatches){
-                podFileContents = podFileContents.replace(standardFirestorePodMatches[0], prebuiltFirestorePodTemplate.replace('{version}', standardFirestorePodMatches[1]));
-                podFileModified = true;
-                utilities.log("Configured Podfile for pre-built Firestore pod");
-            }
-        }
         if(podFileModified) {
             fs.writeFileSync(path.resolve(iosPlatform.podFile), podFileContents);
         }

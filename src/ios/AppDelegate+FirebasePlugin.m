@@ -4,7 +4,6 @@
 
 
 @import UserNotifications;
-@import FirebaseFirestore;
 
 // Implement UNUserNotificationCenterDelegate to receive display notification via APNS for devices running iOS 10 and above.
 // Implement FIRMessagingDelegate to receive data message via FCM for devices running iOS 10 and above.
@@ -84,9 +83,6 @@ static __weak id <UNUserNotificationCenterDelegate> _prevUserNotificationCenterD
             // This property is persistent thus ensuring it stays in sync with FCM settings in newer versions of the app.
             [[FIRMessaging messaging] setAutoInitEnabled:NO];
         }
-    
-        // Setup Firestore
-        [FirebasePlugin setFirestore:[FIRFirestore firestore]];
         
         authStateChangeListener = [[FIRAuth auth] addAuthStateDidChangeListener:^(FIRAuth * _Nonnull auth, FIRUser * _Nullable user) {
             @try {
