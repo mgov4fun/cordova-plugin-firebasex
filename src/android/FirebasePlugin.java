@@ -1,84 +1,86 @@
 package org.apache.cordova.firebase;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ContentResolver;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.media.AudioAttributes;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-
 import android.util.Base64;
 import android.util.Log;
 
-import com.google.android.gms.tasks.TaskCompletionSource;
-import com.google.firebase.auth.ActionCodeSettings;
-import com.google.firebase.auth.EmailAuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
-import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.auth.FirebaseAuthMultiFactorException;
-import com.google.firebase.auth.FirebaseUserMetadata;
-import com.google.firebase.auth.MultiFactorAssertion;
-import com.google.firebase.auth.MultiFactorInfo;
-import com.google.firebase.auth.MultiFactorResolver;
-import com.google.firebase.auth.MultiFactorSession;
-import com.google.firebase.auth.PhoneAuthOptions;
-import com.google.firebase.auth.PhoneMultiFactorGenerator;
-import com.google.firebase.auth.PhoneMultiFactorInfo;
-import com.google.firebase.auth.UserInfo;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.Timestamp;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.OAuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthMultiFactorException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.FirebaseUserMetadata;
 import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.MultiFactorAssertion;
+import com.google.firebase.auth.MultiFactorInfo;
+import com.google.firebase.auth.MultiFactorResolver;
+import com.google.firebase.auth.MultiFactorSession;
 import com.google.firebase.auth.OAuthProvider;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthOptions;
+import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.auth.PhoneMultiFactorGenerator;
+import com.google.firebase.auth.PhoneMultiFactorInfo;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.crashlytics.internal.metadata.UserMetadata;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
 import com.google.firebase.functions.HttpsCallableResult;
 import com.google.firebase.installations.FirebaseInstallations;
 import com.google.firebase.installations.InstallationTokenResult;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigInfo;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigValue;
-import com.google.firebase.perf.FirebasePerformance;
-import com.google.firebase.perf.metrics.Trace;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -94,31 +96,11 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
-import java.util.List;
-import java.util.Date;
-
-// Firebase PhoneAuth
 import java.util.concurrent.TimeUnit;
-
-import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.FirebaseTooManyRequestsException;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthProvider;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import com.google.gson.reflect.TypeToken;
-
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class FirebasePlugin extends CordovaPlugin {
 
