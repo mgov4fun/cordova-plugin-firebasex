@@ -1,9 +1,6 @@
 var execSync = require('child_process').execSync;
 var semver = require('semver');
-var path = require("path");
-const { parsePluginXml, writeJsonToXmlFile, getPluginId, parsePluginVariables, setContext } = require('../lib/utilities');
-
-var pluginVariables = {};
+const { setContext } = require('../lib/utilities');
 
 var minCocoapodsVersion = "^1.11.2";
 
@@ -11,11 +8,6 @@ module.exports = function(context) {
     checkCocoapodsVersion();
 
     setContext(context);
-
-    //get platform from the context supplied by cordova
-    var platforms = context.opts.cordova.platforms;
-
-    pluginVariables = parsePluginVariables();
 };
 
 function checkCocoapodsVersion(){

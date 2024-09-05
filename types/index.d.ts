@@ -119,6 +119,21 @@ export interface FirebasePlugin {
     setAnalyticsCollectionEnabled(
         setEnabled: boolean
     ): void
+    AnalyticsConsentMode: {
+        ANALYTICS_STORAGE: string,
+        AD_STORAGE: string,
+        AD_USER_DATA: string,
+        AD_PERSONALIZATION: string
+    }
+    AnalyticsConsentStatus: {
+        GRANTED: string,
+        DENIED: string
+    }
+    setAnalyticsConsentMode(
+        consent: object,
+        success: (info: object) => void,
+        error: (err: string) => void
+    ): void
     logEvent(
         eventName: string,
         eventProperties: object
@@ -132,6 +147,11 @@ export interface FirebasePlugin {
     setUserProperty(
         userName: string,
         userValue: string
+    ): void
+    initiateOnDeviceConversionMeasurement(
+        userIdentifier: { emailAddress?:string, phoneNumber?: string },
+        success?: () => void,
+        error?: (err: string) => void
     ): void
     setCrashlyticsCollectionEnabled(): void
     didCrashOnPreviousExecution(
@@ -260,6 +280,13 @@ export interface FirebasePlugin {
         success?: (credential:object) => void,
         error?: (err: string) => void,
     ): void
+    authenticateUserWithOAuth(
+        success: (credential:object) => void,
+        error: (err: string) => void,
+        providerId: string,
+        customParameters?: object,
+        scopes?: [string],
+    ): void
     signInWithCredential(
         credential: object,
         success?: () => void,
@@ -272,6 +299,11 @@ export interface FirebasePlugin {
     ): void
     reauthenticateWithCredential(
         credential: object,
+        success?: () => void,
+        error?: (err: string) => void
+    ): void
+    unlinkUserWithProvider(
+        providerId: string,
         success?: () => void,
         error?: (err: string) => void
     ): void
@@ -338,6 +370,9 @@ export interface FirebasePlugin {
     ): void
     registerAuthStateChangeListener(
         fn: (userSignedIn: boolean) => void,
+    ): void
+    registerAuthIdTokenChangeListener(
+        fn: (result: undefined|{idToken: string, providerId: string}) => void,
     ): void
     useAuthEmulator(
         host: string,
@@ -409,6 +444,66 @@ export interface FirebasePlugin {
     ): void
     stopTrace(
         name: string
+    ): void
+    addDocumentToFirestoreCollection(
+        document: object,
+        collection: string,
+        timestamp: boolean,
+        success: () => void,
+        error: (err: string) => void
+    ): void
+    setDocumentInFirestoreCollection(
+        documentId: string,
+        document: object,
+        collection: string,
+        timestamp: boolean,
+        success: () => void,
+        error: (err: string) => void
+    ): void
+    updateDocumentInFirestoreCollection(
+        documentId: string,
+        document: object,
+        collection: string,
+        timestamp: boolean,
+        success: () => void,
+        error: (err: string) => void
+    ): void
+    deleteDocumentFromFirestoreCollection(
+        documentId: string,
+        collection: string,
+        success: () => void,
+        error: (err: string) => void
+    ): void
+    fetchDocumentInFirestoreCollection(
+        documentId: string,
+        collection: string,
+        success: (document: object) => void,
+        error: (err: string) => void
+    ): void
+    fetchFirestoreCollection(
+        collection: string,
+        filters?: [object],
+        success?: (collection: object) => void,
+        error?: (err: string) => void
+    ): void
+    listenToDocumentInFirestoreCollection(
+        success: (event: object) => void,
+        error: (err: string) => void,
+        documentId: string,
+        collection: string,
+        includeMetadata?: boolean
+    ): void
+    listenToFirestoreCollection(
+        success: (event: object) => void,
+        error: (err: string) => void,
+        collection: string,
+        filters?: [object],
+        includeMetadata?: boolean
+    ): void
+    removeFirestoreListener(
+        success: () => void,
+        error: (err: string) => void,
+        listenerId: string
     ): void
     registerApplicationDidBecomeActiveListener(
         fn: () => void,

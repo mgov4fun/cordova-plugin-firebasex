@@ -1,10 +1,7 @@
 #import <Cordova/CDV.h>
 #import "AppDelegate.h"
-#import <FirebaseCore/FirebaseCore.h>
-#import <FirebaseMessaging/FirebaseMessaging.h>
-#import <FirebaseAuth/FirebaseAuth.h>
-#import <FirebaseInstallations/FirebaseInstallations.h>
-#import <FirebaseCrashlytics/FirebaseCrashlytics.h>
+#import "FirebaseWrapper.h"
+@import FirebaseFirestore;
 
 @interface FirebasePlugin : CDVPlugin
 
@@ -23,8 +20,10 @@
 - (void)authenticateUserWithApple:(CDVInvokedUrlCommand*)command;
 - (void)authenticateUserWithMicrosoft:(CDVInvokedUrlCommand*)command;
 - (void)authenticateUserWithFacebook:(CDVInvokedUrlCommand*)command;
+- (void)authenticateUserWithOAuth:(CDVInvokedUrlCommand*)command;
 - (void)signInWithCredential:(CDVInvokedUrlCommand*)command;
 - (void)linkUserWithCredential:(CDVInvokedUrlCommand*)command;
+- (void)unlinkUserWithProvider:(CDVInvokedUrlCommand*)command;
 - (void)reauthenticateWithCredential:(CDVInvokedUrlCommand*)command;
 - (void)isUserSignedIn:(CDVInvokedUrlCommand*)command;
 - (void)signOutUser:(CDVInvokedUrlCommand*)command;
@@ -71,10 +70,12 @@
 // Analytics
 - (void)setAnalyticsCollectionEnabled:(CDVInvokedUrlCommand*)command;
 - (void)isAnalyticsCollectionEnabled:(CDVInvokedUrlCommand*)command;
+- (void)setAnalyticsConsentMode:(CDVInvokedUrlCommand*)command;
 - (void)logEvent:(CDVInvokedUrlCommand*)command;
 - (void)setScreenName:(CDVInvokedUrlCommand*)command;
 - (void)setUserId:(CDVInvokedUrlCommand*)command;
 - (void)setUserProperty:(CDVInvokedUrlCommand*)command;
+- (void)initiateOnDeviceConversionMeasurement:(CDVInvokedUrlCommand*)command;
 
 // Crashlytics
 - (void)setCrashlyticsCollectionEnabled:(CDVInvokedUrlCommand*)command;
@@ -105,6 +106,18 @@
 - (void)incrementCounter:(CDVInvokedUrlCommand*)command;
 - (void)stopTrace:(CDVInvokedUrlCommand*)command;
 
+// Firestore
+- (void)addDocumentToFirestoreCollection:(CDVInvokedUrlCommand*)command;
+- (void)setDocumentInFirestoreCollection:(CDVInvokedUrlCommand*)command;
+- (void)updateDocumentInFirestoreCollection:(CDVInvokedUrlCommand*)command;
+- (void)deleteDocumentFromFirestoreCollection:(CDVInvokedUrlCommand*)command;
+- (void)documentExistsInFirestoreCollection:(CDVInvokedUrlCommand*)command;
+- (void)fetchDocumentInFirestoreCollection:(CDVInvokedUrlCommand*)command;
+- (void)fetchFirestoreCollection:(CDVInvokedUrlCommand*)command;
+- (void)listenToDocumentInFirestoreCollection:(CDVInvokedUrlCommand*)command;
+- (void)listenToFirestoreCollection:(CDVInvokedUrlCommand*)command;
+- (void)removeFirestoreListener:(CDVInvokedUrlCommand*)command;
+
 // Functions
 - (void)functionsHttpsCallable:(CDVInvokedUrlCommand*)command;
 
@@ -113,14 +126,18 @@
 - (void) getInstallationToken:(CDVInvokedUrlCommand*)command;
 - (void) deleteInstallationId:(CDVInvokedUrlCommand*)command;
 
+
+
 // Internals
 + (FirebasePlugin *) firebasePlugin;
 + (NSString*) appleSignInNonce;
++ (void) setFirestore:(FIRFirestore*) firestoreInstance;
 - (void) handlePluginExceptionWithContext: (NSException*) exception :(CDVInvokedUrlCommand*)command;
 - (void) handlePluginExceptionWithoutContext: (NSException*) exception;
 - (void) _logError: (NSString*)msg;
 - (void) _logInfo: (NSString*)msg;
 - (void) _logMessage: (NSString*)msg;
+- (BOOL) _shouldEnableCrashlytics;
 - (NSNumber*) saveAuthCredential: (FIRAuthCredential *) authCredential;
 - (void)executeGlobalJavascript: (NSString*)jsString;
 
