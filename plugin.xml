@@ -162,9 +162,6 @@
 		<framework src="AuthenticationServices.framework" />
 
 		<podspec>
-			<config>
-				<source url="https://cdn.cocoapods.org/"/>
-			</config>
 			<pods use-frameworks="true">
 				<pod name="FirebaseCore" spec="10.24.0"/>
 				<pod name="FirebaseAuth" spec="10.24.0"/>
