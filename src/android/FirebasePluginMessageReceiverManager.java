@@ -15,6 +15,10 @@ public class FirebasePluginMessageReceiverManager {
         receivers.add(receiver);
     }
 
+    public static void unregister(FirebasePluginMessageReceiver receiver) {
+        receivers.remove(receiver);
+    }
+
     public static boolean onMessageReceived(RemoteMessage remoteMessage) {
         boolean handled = false;
         for (FirebasePluginMessageReceiver receiver : receivers) {

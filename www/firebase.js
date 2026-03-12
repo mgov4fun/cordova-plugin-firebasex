@@ -190,6 +190,10 @@ exports.setUserProperty = function (name, value, success, error) {
   exec(success, error, "FirebasePlugin", "setUserProperty", [name, value]);
 };
 
+exports.refresh = function (success, error) {
+    exec(success, error, "FirebasePlugin", "refresh", []);
+};
+
 // iOS-only
 exports.initiateOnDeviceConversionMeasurement = function(userIdentifier, success, error){
     if(typeof userIdentifier !== "object"

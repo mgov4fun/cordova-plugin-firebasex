@@ -11,6 +11,12 @@ static NSMutableArray* receivers;
     [receivers addObject:receiver];
 }
 
++ (void) unregister:(FirebasePluginMessageReceiver*)receiver {
+    if(receivers != nil){
+        [receivers removeObject:receiver];
+    }
+}
+
 + (bool) sendNotification:(NSDictionary *)userInfo {
     bool handled = false;
     for(FirebasePluginMessageReceiver* receiver in receivers){

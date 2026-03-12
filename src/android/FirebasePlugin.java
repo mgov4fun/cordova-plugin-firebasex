@@ -597,6 +597,8 @@ public class FirebasePlugin extends CordovaPlugin {
                 case "getInstallationToken":
                     this.getInstallationToken(args, callbackContext);
                     break;
+                case "refresh":
+                    instance = null;    
                 default:
                     callbackContext.error("Invalid action: " + action);
                     return false;

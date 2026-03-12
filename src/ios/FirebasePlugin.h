@@ -127,7 +127,7 @@
 - (void) getInstallationToken:(CDVInvokedUrlCommand*)command;
 - (void) deleteInstallationId:(CDVInvokedUrlCommand*)command;
 
-
+- (void)refresh:(CDVInvokedUrlCommand *)command;
 
 // Internals
 + (FirebasePlugin *) firebasePlugin;
